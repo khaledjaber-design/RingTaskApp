@@ -1,4 +1,5 @@
 import { AuthButtons } from "@/components/AuthButtons";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -20,6 +21,16 @@ export default function Home() {
         {/* Buttons */}
         <div className="px-7 mt-12 w-full">
           <AuthButtons />
+        </div>
+
+        {/* Sign Up Link */}
+        <div className="absolute bottom-12 left-0 w-full px-12 flex flex-col gap-4">
+          <p className="text-center text-[14px] font-semibold text-[#64748b]">
+            Don&apos;t have an account?{" "}
+            <Link href="/login/signup" className="text-[#0f172a] hover:underline transition-colors">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
     </main>
