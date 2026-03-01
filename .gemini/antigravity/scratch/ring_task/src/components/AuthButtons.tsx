@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export function AuthButtons() {
@@ -9,7 +10,7 @@ export function AuthButtons() {
         <div className="flex flex-col gap-[18px] w-full">
             {/* Google (white) */}
             <button
-                onClick={() => router.push("/login/google")}
+                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                 className="flex items-center justify-center gap-3 w-full h-[54px] bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors font-semibold text-[#334155] shadow-sm text-[15px]"
             >
                 <svg height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,7 +24,7 @@ export function AuthButtons() {
 
             {/* Facebook (blue) */}
             <button
-                onClick={() => router.push("/login/facebook")}
+                onClick={() => signIn("facebook", { callbackUrl: "/dashboard" })}
                 className="flex items-center justify-center gap-3 w-full h-[54px] bg-[#2563eb] text-white rounded-full hover:bg-blue-700 transition-colors font-semibold shadow-sm text-[15px]"
             >
                 <svg height="20px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -32,9 +33,9 @@ export function AuthButtons() {
                 Continue with Facebook
             </button>
 
-            {/* Apple (black) */}
+            {/* Apple (black) - Optional pending env vars */}
             <button
-                onClick={() => router.push("/login/apple")}
+                onClick={() => signIn("apple", { callbackUrl: "/dashboard" })}
                 className="flex items-center justify-center gap-3 w-full h-[54px] bg-[#0f172a] text-white rounded-full hover:bg-black transition-colors font-semibold shadow-sm text-[15px]"
             >
                 <svg height="20px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -44,9 +45,9 @@ export function AuthButtons() {
                 Continue with Apple
             </button>
 
-            {/* Email (green) */}
+            {/* Email (credentials) */}
             <button
-                onClick={() => router.push("/login/email")}
+                onClick={() => router.push("/login/credentials")}
                 className="flex items-center justify-center gap-3 w-full h-[54px] bg-[#20c997] text-white rounded-full hover:bg-[#1bb889] transition-colors font-semibold shadow-sm text-[15px]"
             >
                 <svg height="20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
