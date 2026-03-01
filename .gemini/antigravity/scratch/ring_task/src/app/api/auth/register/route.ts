@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             data: {
                 email,
                 password: hashedPassword,
-            } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+            }
         });
 
         return NextResponse.json({ user: { id: user.id, email: user.email }, message: "User created successfully" }, { status: 201 });
