@@ -1,103 +1,45 @@
-"use client";
+import { Bell, Mic, Home, Calendar, User, Plus } from "lucide-react";
 
-import React, { useState, useEffect } from 'react';
-
-export default function RingTaskApp() {
-  const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean }[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [mounted, setMounted] = useState(false);
-
-  // Load from LocalStorage only after component mounts to avoid Next.js errors
-  useEffect(() => {
-    const saved = localStorage.getItem('ring-tasks-v1');
-    if (saved) setTasks(JSON.parse(saved));
-    setMounted(true);
-  }, []);
-
-  // Save to LocalStorage whenever tasks change
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('ring-tasks-v1', JSON.stringify(tasks));
-    }
-  }, [tasks, mounted]);
-
-  const addTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-    setTasks([...tasks, { id: Date.now(), text: inputValue, completed: false }]);
-    setInputValue('');
-  };
-
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
-  };
-
-  const deleteTask = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      setTasks(tasks.filter(t => t.id !== id));
-    }
-  };
-
-  const completedCount = tasks.filter(t => t.completed).length;
-  const percentage = tasks.length === 0 ? 0 : Math.round((completedCount / tasks.length) * 100);
-
-  if (!mounted) return null; // Prevents "Hydration" flicker
-
+export default function RingTaskHome() {
   return (
-    <main className="min-h-screen bg-white p-8 flex flex-col items-center">
-      {/* THE RING PROGRESS */}
-      <div className="relative w-48 h-48 mb-8">
-        <svg className="w-full h-full" viewBox="0 0 36 36">
-          <circle className="stroke-gray-100" strokeWidth="3" fill="transparent" r="16" cx="18" cy="18" />
-          <circle 
-            className="stroke-green-500 transition-all duration-500 ease-in-out" 
-            strokeWidth="3" 
-            strokeDasharray={`${percentage}, 100`} 
-            strokeLinecap="round" 
-            fill="transparent" 
-            r="16" cx="18" cy="18" 
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-4xl font-bold">{percentage}%</span>
-          <span className="text-gray-500 text-sm">Done</span>
-        </div>
-      </div>
+    <div className="w-[414px] h-[896px] bg-[#F4F7FA] relative flex flex-col shadow-2xl border-[8px] border-[#1E293B] rounded-[60px] overflow-hidden mx-auto">
+      {/* Header - Matches Page 15 of PDF */}
+      <header className="px-6 py-10 flex justify-between items-center shrink-0">
+        <Bell className="text-gray-400" size={24} />
+        <h2 className="text-xl font-black text-[#1E293B]">RingTask</h2>
+        <div className="bg-[#8B5CF6] p-2 rounded-full text-white shadow-lg"><Mic size={20} fill="currentColor" /></div>
+      </header>
 
-      {/* ALWAYS VISIBLE INPUT */}
-      <form onSubmit={addTask} className="w-full max-w-md flex gap-2 mb-8">
-        <input 
-          className="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-black"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="What's the next goal?"
-        />
-        <button type="submit" className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition">
-          Add
-        </button>
-      </form>
+      {/* Efficiency Ring Area */}
+      <main className="px-6 flex-1 overflow-y-auto">
+        <h1 className="text-2xl font-black text-[#1E293B]">Hello, Khaled</h1>
+        <p className="text-sm text-gray-400 mb-8">Efficiency is up 12% today!</p>
 
-      {/* TASK LIST */}
-      <div className="w-full max-w-md space-y-3">
-        {tasks.map(task => (
-          <div key={task.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl group border border-transparent hover:border-gray-200 transition">
-            <div className="flex items-center gap-3 cursor-pointer flex-1" onClick={() => toggleTask(task.id)}>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition ${task.completed ? 'bg-green-500 border-green-500' : 'border-gray-300'}`}>
-                {task.completed && <span className="text-white text-xs">✓</span>}
-              </div>
-              <span className={`text-lg ${task.completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                {task.text}
-              </span>
-            </div>
-            <button 
-              onClick={() => deleteTask(task.id)}
-              className="text-gray-400 hover:text-red-500 transition px-2"
-            >
-              ✕
-            </button>
+        <div className="bg-white rounded-[40px] p-10 flex flex-col items-center shadow-sm border border-gray-100 mb-8">
+          <div className="w-40 h-40 rounded-full border-[15px] border-[#F1F5F9] border-t-[#10B981] flex items-center justify-center">
+            <span className="text-4xl font-black text-[#1E293B]">85%</span>
           </div>
-        ))}
-      </div>
-    </main>
+          <p className="mt-4 text-[10px] font-bold text-gray-300 uppercase tracking-widest">Weekly Goal</p>
+        </div>
+
+        {/* AI Insight */}
+        <div className="bg-[#8B5CF6] p-6 rounded-[30px] text-white shadow-lg shadow-purple-100">
+          <p className="text-sm font-bold leading-relaxed italic">
+            "Khaled, you usually finish tasks fastest in the morning."
+          </p>
+        </div>
+      </main>
+
+      {/* Navigation Bar */}
+      <nav className="absolute bottom-0 w-full bg-white/90 backdrop-blur-md py-8 px-10 flex justify-between items-center border-t border-gray-100">
+        <Home className="text-[#10B981]" size={28} />
+        <Calendar className="text-gray-300" size={28} />
+        <div className="absolute left-1/2 -translate-x-1/2 -top-10">
+          <button className="bg-[#10B981] p-5 rounded-full text-white shadow-xl border-[5px] border-[#F4F7FA]"><Plus size={30} /></button>
+        </div>
+        <Bell className="text-gray-300" size={28} />
+        <User className="text-gray-300" size={28} />
+      </nav>
+    </div>
   );
 }
