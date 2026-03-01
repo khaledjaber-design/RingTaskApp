@@ -25,9 +25,8 @@ export async function POST(req: Request) {
         const user = await prisma.user.create({
             data: {
                 email,
-                // Cast to any to bypass schema mismatch if password isn't formally defined in Prisma adapter but added custom
                 password: hashedPassword,
-            } as any
+            } as any // eslint-disable-line @typescript-eslint/no-explicit-any
         });
 
         return NextResponse.json({ user: { id: user.id, email: user.email }, message: "User created successfully" }, { status: 201 });
