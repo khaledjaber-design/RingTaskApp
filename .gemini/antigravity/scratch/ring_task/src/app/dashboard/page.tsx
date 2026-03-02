@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getDashboardData, applyAISuggestion } from "@/lib/actions";
 import TaskCheckbox from "./TaskCheckbox";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardHome() {
     const data = await getDashboardData().catch(() => null);
 
