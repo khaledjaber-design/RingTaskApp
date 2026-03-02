@@ -1,11 +1,11 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function SignUp() {
+function SignUpContent() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -26,18 +26,14 @@ export default function SignUp() {
             if (res.ok) {
                 setSuccess(true);
                 // Immediately sign them in
-                const signInRes = await signIn("credentials", {
+                signIn("credentials", {
                     email,
                     password,
-                    redirect: false,
+                    callbackUrl: "/dashboard",
                 });
-
-                if (!signInRes?.error) {
-                    router.push("/dashboard");
-                }
             } else {
                 const data = await res.json();
-                setError(data.message || "Failed to create account");
+                setError(data.error || "Registration failed");
             }
         } catch {
             setError("Something went wrong");
@@ -45,34 +41,37 @@ export default function SignUp() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center bg-slate-200 p-4 font-sans">
-            <div className="w-full max-w-[380px] h-[812px] bg-[#f8fafc] rounded-[3.5rem] border-[16px] border-[#1e293b] shadow-2xl flex flex-col relative overflow-hidden ring-4 ring-gray-300 ring-opacity-50">
+        <main className="flex min-h-screen flex-col items-center justify-center bg-[#f8fafc] p-4 font-sans relative overflow-hidden">
+            {/* Background Decorations */}
+            <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-[#9ee6bb] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+            <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-[#a8ccfa] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
 
-                {/* Back Button */}
-                <Link href="/" className="absolute top-6 left-6 w-11 h-11 bg-white text-gray-700 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 border border-gray-200 transition">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                </Link>
-
-                {/* Branding */}
-                <div className="flex flex-col items-center mt-32 px-6">
-                    <div className="w-[60px] h-[60px] bg-[#0f172a] rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2"></path>
-                            <circle cx="8.5" cy="7" r="4"></circle>
-                            <line x1="20" y1="8" x2="20" y2="14"></line>
-                            <line x1="23" y1="11" x2="17" y2="11"></line>
+            <div className="w-full max-w-[380px] h-[812px] bg-white rounded-[3.5rem] border-[16px] border-[#1e293b] shadow-2xl flex flex-col relative overflow-hidden z-10 px-8 py-10">
+                {/* Back Button & Header Row */}
+                <div className="flex items-center justify-between mb-8 w-full mt-4">
+                    <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center text-[#64748b] bg-gray-50 rounded-full hover:bg-gray-100 transition shadow-sm border border-gray-100">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                    <div className="w-10 h-10 flex items-center justify-center bg-[#20c997] rounded-xl shadow-sm">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </div>
-                    <h1 className="text-[28px] font-extrabold text-[#0f172a] tracking-tight leading-none mb-3 text-center">Sign Up</h1>
-                    <p className="text-[#64748b] text-[15px] font-medium text-center">Create your new account</p>
                 </div>
 
-                {/* Input */}
-                <form onSubmit={handleSubmit} className="px-7 mt-8 w-full flex flex-col gap-4">
-                    {error && <p className="text-red-500 text-sm text-center font-medium">{error}</p>}
+                {/* Headers */}
+                <div className="mb-8 w-full">
+                    <h1 className="text-[28px] font-extrabold text-[#0f172a] tracking-tight leading-tight">Create an<br />account</h1>
+                    <p className="text-[15px] font-medium text-[#64748b] mt-2">Sign up to get started</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+                    {error && <div className="p-3 mb-2 bg-red-50 border border-red-100 text-red-600 text-[13px] font-semibold rounded-xl text-center">{error}</div>}
+
                     <input
                         type="email"
                         placeholder="Email address"
@@ -83,7 +82,7 @@ export default function SignUp() {
                     />
                     <input
                         type="password"
-                        placeholder="Create Password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-0 focus:border-[#0f172a] outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400 text-[15px]"
@@ -109,5 +108,13 @@ export default function SignUp() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function SignUpPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#f8fafc] flex items-center justify-center font-bold text-[#0f172a]">Loading...</div>}>
+            <SignUpContent />
+        </Suspense>
     );
 }

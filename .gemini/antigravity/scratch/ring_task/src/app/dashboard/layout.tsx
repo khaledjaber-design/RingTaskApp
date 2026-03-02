@@ -1,6 +1,8 @@
 import BottomNav from "./BottomNav";
 import VoiceModal from "@/components/VoiceModal";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({
     children,
 }: {
