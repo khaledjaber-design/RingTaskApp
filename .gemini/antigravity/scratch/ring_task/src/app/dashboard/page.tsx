@@ -173,6 +173,9 @@ export default async function DashboardHome() {
     } catch (err) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const e = err as any;
+        if (e?.message === "Unauthorized") {
+            return <div className="p-8 text-center text-gray-500">Please log in to view your dashboard.</div>;
+        }
         return (
             <div className="p-8 text-red-600 bg-red-50 flex flex-col gap-2 font-mono">
                 <h1 className="font-bold">Raw Server Crash Extracted:</h1>
