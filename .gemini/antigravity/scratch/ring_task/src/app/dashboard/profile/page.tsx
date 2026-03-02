@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 export default function ProfileSettings() {
     const router = useRouter();
@@ -187,7 +188,7 @@ export default function ProfileSettings() {
                             <button
                                 onClick={() => {
                                     setIsLogoutModalOpen(false);
-                                    router.push("/api/auth/signout");
+                                    signOut({ callbackUrl: "/login/credentials" });
                                 }}
                                 className="flex-1 py-3.5 bg-[#ef4444] rounded-2xl text-[15px] font-extrabold text-white hover:bg-red-600 transition shadow-sm border border-transparent"
                             >
