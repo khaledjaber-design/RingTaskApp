@@ -178,12 +178,14 @@ export default async function DashboardHome() {
 
             </div >
         );
-    } catch (e: any) {
+    } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const e = err as any;
         return (
             <div className="p-8 text-red-600 bg-red-50 flex flex-col gap-2 font-mono">
                 <h1 className="font-bold">Raw Server Crash Extracted:</h1>
-                <p>Message: {e.message}</p>
-                <div className="whitespace-pre-wrap text-[11px]">{e.stack}</div>
+                <p>Message: {e?.message || String(e)}</p>
+                <div className="whitespace-pre-wrap text-[11px]">{e?.stack || ""}</div>
             </div>
         );
     }
