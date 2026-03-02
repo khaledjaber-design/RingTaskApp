@@ -96,7 +96,7 @@ function CredentialsContent() {
                 {/* Footer */}
                 <div className="absolute bottom-12 left-0 w-full px-12 flex flex-col gap-4">
                     <p className="text-center text-[14px] font-semibold text-[#64748b]">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/login/signup" className="text-[#0f172a] hover:underline transition-colors">
                             Sign up
                         </Link>
