@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { getDashboardData, applyAISuggestion } from "@/lib/actions";
 import TaskCheckbox from "./TaskCheckbox";
+import VoiceActivationButton from "./VoiceActivationButton";
 
 export const dynamic = "force-dynamic";
 
@@ -33,16 +34,7 @@ export default async function DashboardHome() {
                         <p className="text-[#64748b] text-[13px] font-medium mt-1">Here&apos;s your productivity snapshot</p>
                     </div>
 
-                    <button
-                        onClick={() => window.dispatchEvent(new Event('open-voice-modal'))}
-                        className="w-11 h-11 bg-[#8b5cf6] text-white rounded-full flex items-center justify-center shadow-md hover:bg-purple-600 transition shrink-0"
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                            <line x1="12" y1="19" x2="12" y2="22"></line>
-                        </svg>
-                    </button>
+                    <VoiceActivationButton />
                 </div>
 
                 <div className="px-5 pb-8 flex flex-col gap-4">
