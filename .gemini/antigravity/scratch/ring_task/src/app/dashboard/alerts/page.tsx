@@ -7,17 +7,17 @@ export default function AlertsPage() {
     const router = useRouter();
 
     return (
-        <div className="flex flex-col min-h-full bg-[#f8fafc] w-full relative px-5 pt-8 pb-10">
+        <div className="flex flex-col min-h-full bg-[#f8fafc] dark:bg-[#0f172a] w-full relative px-5 pt-8 pb-10 transition-colors duration-300">
 
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
-                <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-start text-[#0f172a]">
+                <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-start text-[#0f172a] dark:text-white transition-colors">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                 </button>
-                <h1 className="text-[20px] font-extrabold text-[#0f172a] tracking-tight">Notifications</h1>
+                <h1 className="text-[20px] font-extrabold text-[#0f172a] dark:text-white tracking-tight transition-colors">Notifications</h1>
                 <button
                     onClick={() => window.dispatchEvent(new Event('open-voice-modal'))}
                     className="w-10 h-10 bg-[#8b5cf6] text-white rounded-full flex items-center justify-center shadow-sm hover:bg-purple-600 transition"
@@ -33,62 +33,62 @@ export default function AlertsPage() {
             <div className="flex flex-col gap-4">
 
                 {/* Notification 1: Task Reminder */}
-                <Link href="/dashboard/alerts/1" className="bg-white rounded-[1.2rem] p-5 shadow-sm border border-gray-100 flex gap-4 items-start hover:bg-gray-50 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+                <Link href="/dashboard/alerts/1" className="bg-white dark:bg-[#1e293b] rounded-[1.2rem] p-5 shadow-sm border border-gray-100 dark:border-transparent flex gap-4 items-start hover:bg-gray-50 dark:hover:bg-[#283548] transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center shrink-0 transition-colors">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#20c997" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                     </div>
                     <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-[#0f172a] text-[15px]">Team Meeting in 30 minutes</h3>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <h3 className="font-bold text-[#0f172a] dark:text-white text-[15px] transition-colors">Team Meeting in 30 minutes</h3>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stroke-[#94a3b8] dark:stroke-gray-500 transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
-                        <p className="text-[#64748b] text-[13px] leading-snug font-medium mb-3">Your team meeting starts at 2:00 PM. Tap to review agenda.</p>
-                        <span className="text-[#94a3b8] text-[11px] font-bold uppercase tracking-wider">1:30 PM</span>
+                        <p className="text-[#64748b] dark:text-gray-400 text-[13px] leading-snug font-medium mb-3 transition-colors">Your team meeting starts at 2:00 PM. Tap to review agenda.</p>
+                        <span className="text-[#94a3b8] dark:text-gray-500 text-[11px] font-bold uppercase tracking-wider transition-colors">1:30 PM</span>
                     </div>
                 </Link>
 
                 {/* Notification 2: AI Suggestion */}
-                <Link href="/dashboard/alerts/2" className="bg-white rounded-[1.2rem] p-5 shadow-sm border border-gray-100 flex gap-4 items-start hover:bg-gray-50 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center shrink-0">
+                <Link href="/dashboard/alerts/2" className="bg-white dark:bg-[#1e293b] rounded-[1.2rem] p-5 shadow-sm border border-gray-100 dark:border-transparent flex gap-4 items-start hover:bg-gray-50 dark:hover:bg-[#283548] transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center shrink-0 transition-colors">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2L16 6l4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5 1.5-4z"></path><path d="M5 10l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5.5-2z"></path></svg>
                     </div>
                     <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-[#0f172a] text-[15px]">AI Suggestion: Block focus time</h3>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <h3 className="font-bold text-[#0f172a] dark:text-white text-[15px] transition-colors">AI Suggestion: Block focus time</h3>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stroke-[#94a3b8] dark:stroke-gray-500 transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
-                        <p className="text-[#64748b] text-[13px] leading-snug font-medium mb-3">You have 3 urgent tasks this week. Want me to block 2 hours for deep...</p>
-                        <span className="text-[#94a3b8] text-[11px] font-bold uppercase tracking-wider">9:00 AM</span>
+                        <p className="text-[#64748b] dark:text-gray-400 text-[13px] leading-snug font-medium mb-3 transition-colors">You have 3 urgent tasks this week. Want me to block 2 hours for deep...</p>
+                        <span className="text-[#94a3b8] dark:text-gray-500 text-[11px] font-bold uppercase tracking-wider transition-colors">9:00 AM</span>
                     </div>
                 </Link>
 
                 {/* Notification 3: Task Reminder */}
-                <Link href="/dashboard/alerts/3" className="bg-white rounded-[1.2rem] p-5 shadow-sm border border-gray-100 flex gap-4 items-start hover:bg-gray-50 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+                <Link href="/dashboard/alerts/3" className="bg-white dark:bg-[#1e293b] rounded-[1.2rem] p-5 shadow-sm border border-gray-100 dark:border-transparent flex gap-4 items-start hover:bg-gray-50 dark:hover:bg-[#283548] transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center shrink-0 transition-colors">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#20c997" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                     </div>
                     <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-[#0f172a] text-[15px]">Gym Workout today at 6 PM</h3>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <h3 className="font-bold text-[#0f172a] dark:text-white text-[15px] transition-colors">Gym Workout today at 6 PM</h3>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stroke-[#94a3b8] dark:stroke-gray-500 transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
-                        <p className="text-[#64748b] text-[13px] leading-snug font-medium mb-3">Don&apos;t forget your gym session. Pack your gear!</p>
-                        <span className="text-[#94a3b8] text-[11px] font-bold uppercase tracking-wider">12:00 PM</span>
+                        <p className="text-[#64748b] dark:text-gray-400 text-[13px] leading-snug font-medium mb-3 transition-colors">Don&apos;t forget your gym session. Pack your gear!</p>
+                        <span className="text-[#94a3b8] dark:text-gray-500 text-[11px] font-bold uppercase tracking-wider transition-colors">12:00 PM</span>
                     </div>
                 </Link>
 
                 {/* Notification 4: AI Suggestion */}
-                <Link href="/dashboard/alerts/4" className="bg-white rounded-[1.2rem] p-5 shadow-sm border border-gray-100 flex gap-4 items-start hover:bg-gray-50 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center shrink-0">
+                <Link href="/dashboard/alerts/4" className="bg-white dark:bg-[#1e293b] rounded-[1.2rem] p-5 shadow-sm border border-gray-100 dark:border-transparent flex gap-4 items-start hover:bg-gray-50 dark:hover:bg-[#283548] transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center shrink-0 transition-colors">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2L16 6l4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5 1.5-4z"></path><path d="M5 10l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5.5-2z"></path></svg>
                     </div>
                     <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-bold text-[#0f172a] text-[15px]">AI Suggestion: Reschedule task</h3>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <h3 className="font-bold text-[#0f172a] dark:text-white text-[15px] transition-colors">AI Suggestion: Reschedule task</h3>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stroke-[#94a3b8] dark:stroke-gray-500 transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
-                        <p className="text-[#64748b] text-[13px] leading-snug font-medium mb-3">&quot;Buy Groceries&quot; conflicts with &quot;Project Review&quot;. Move to...</p>
-                        <span className="text-[#94a3b8] text-[11px] font-bold uppercase tracking-wider">Yesterday</span>
+                        <p className="text-[#64748b] dark:text-gray-400 text-[13px] leading-snug font-medium mb-3 transition-colors">&quot;Buy Groceries&quot; conflicts with &quot;Project Review&quot;. Move to...</p>
+                        <span className="text-[#94a3b8] dark:text-gray-500 text-[11px] font-bold uppercase tracking-wider transition-colors">Yesterday</span>
                     </div>
                 </Link>
 
