@@ -197,7 +197,7 @@ export default function ProfileSettings() {
                             <button
                                 onClick={() => {
                                     setIsLogoutModalOpen(false);
-                                    signOut({ callbackUrl: "/login" });
+                                    signOut({ callbackUrl: "/" });
                                 }}
                                 className="flex-1 py-3.5 bg-[#ef4444] dark:bg-red-500/20 rounded-2xl text-[15px] font-extrabold text-white dark:text-red-400 hover:bg-red-600 dark:hover:bg-red-500/30 transition-colors shadow-sm border border-transparent"
                             >
