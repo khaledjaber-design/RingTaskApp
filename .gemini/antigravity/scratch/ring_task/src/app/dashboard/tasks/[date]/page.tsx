@@ -1,17 +1,10 @@
 import Link from "next/link";
 import { getTasksForDate } from "@/lib/actions";
-import TaskCheckbox from "../TaskCheckbox";
+import TaskCheckbox from "../../TaskCheckbox";
 
 export const dynamic = "force-dynamic";
 
-interface Task {
-    id: string;
-    title: string;
-    category: string;
-    priority: string;
-    time: string | null;
-    isCompleted: boolean;
-}
+type Task = Awaited<ReturnType<typeof getTasksForDate>>[number];
 
 export default async function DailyTasks({ params }: { params: { date: string } }) {
     const dateStr = params.date ?? new Date().toISOString().split('T')[0];
@@ -23,7 +16,7 @@ export default async function DailyTasks({ params }: { params: { date: string } 
     let tasks: Task[] = [];
     try {
         tasks = await getTasksForDate(dateStr);
-    } catch {
+    } catch (_e) {
         // unauthenticated or error — show empty state
     }
 
