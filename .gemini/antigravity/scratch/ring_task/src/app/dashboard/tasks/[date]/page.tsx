@@ -16,7 +16,8 @@ export default async function DailyTasks({ params }: { params: { date: string } 
     let tasks: Task[] = [];
     try {
         tasks = await getTasksForDate(dateStr);
-    } catch (_e) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch {
         // unauthenticated or error — show empty state
     }
 
