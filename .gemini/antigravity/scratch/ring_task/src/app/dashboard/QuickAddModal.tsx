@@ -6,24 +6,31 @@ import { createTask } from "@/lib/actions";
 export default function QuickAddModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const [isPending, startTransition] = useTransition();
     const [title, setTitle] = useState("");
+    const [error, setError] = useState("");
 
     if (!isOpen) return null;
 
     const handleSave = () => {
         if (!title.trim()) return;
+        setError("");
 
         startTransition(async () => {
-            await createTask({
-                title,
-                category: "Work",
-                priority: "Medium",
-                date: new Date(),
-                time: "Anytime",
-                reminder: false,
-                repeat: "None"
-            });
-            setTitle("");
-            onClose();
+            try {
+                await createTask({
+                    title,
+                    category: "Work",
+                    priority: "Medium",
+                    date: new Date(),
+                    time: "Anytime",
+                    reminder: false,
+                    repeat: "None"
+                });
+                setTitle("");
+                onClose();
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : "Failed to save task. Please try again.";
+                setError(msg);
+            }
         });
     }
 
@@ -48,6 +55,10 @@ export default function QuickAddModal({ isOpen, onClose }: { isOpen: boolean, on
                     className="w-full text-[18px] font-bold text-[#0f172a] dark:text-white placeholder:text-[#94a3b8] dark:placeholder:text-gray-500 bg-gray-50 dark:bg-[#1e293b] dark:border dark:border-gray-800 rounded-xl px-4 py-4 outline-none focus:ring-2 focus:ring-[#20c997] transition-all"
                     autoFocus
                 />
+
+                {error && (
+                    <p className="text-red-500 text-[13px] font-medium -mt-2">{error}</p>
+                )}
 
                 <div className="flex gap-2">
                     <button
