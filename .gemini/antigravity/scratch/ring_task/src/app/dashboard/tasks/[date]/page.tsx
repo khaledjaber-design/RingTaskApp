@@ -115,7 +115,21 @@ export default async function DailyTasks({ params }: { params: { date: string } 
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8M12 8v8"></path></svg>
                     </div>
                     <p className="text-[#64748b] dark:text-gray-400 font-semibold text-[15px] text-center transition-colors">No tasks for this day</p>
-                    <p className="text-[#94a3b8] dark:text-gray-500 text-[13px] text-center transition-colors">Tap the + button to add a task</p>
+                    <Link href={`/dashboard/tasks/new?date=${dateStr}`} className="mt-2 px-6 py-3 bg-[#20c997] text-white font-bold text-[14px] rounded-full shadow hover:bg-[#1bb889] transition-colors">
+                        + Add Task
+                    </Link>
+                </div>
+            )}
+
+            {/* Floating Add button for non-empty days */}
+            {tasks.length > 0 && (
+                <div className="fixed bottom-28 right-5 z-50">
+                    <Link
+                        href={`/dashboard/tasks/new?date=${dateStr}`}
+                        className="w-14 h-14 bg-[#20c997] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#1bb889] transition-colors"
+                    >
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </Link>
                 </div>
             )}
 
