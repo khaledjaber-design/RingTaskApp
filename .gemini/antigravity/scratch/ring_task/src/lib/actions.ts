@@ -101,3 +101,33 @@ export async function applyAISuggestion() {
 
     revalidatePath("/dashboard");
 }
+
+export async function getTasksForDate(dateStr: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("User not found");
+
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    const tasks = await prisma.task.findMany({
+        where: {
+            userId: user.id,
+            date: { gte: startOfDay, lte: endOfDay }
+        },
+        orderBy: { createdAt: 'asc' }
+    });
+
+    return tasks;
+}
+
+export async function deleteTask(taskId: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) throw new Error("Unauthorized");
+    await prisma.task.delete({ where: { id: taskId } });
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/tasks");
+}
