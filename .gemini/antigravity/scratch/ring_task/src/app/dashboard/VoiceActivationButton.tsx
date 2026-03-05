@@ -124,7 +124,11 @@ export default function VoiceActivationButton() {
                 transcriptRef.current = "";
             }, 1500);
         } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : "Failed to save. Please try again.";
+            const raw = e instanceof Error ? e.message : "Failed to save. Please try again.";
+            // If session expired after NEXTAUTH_SECRET change, guide user to re-login
+            const msg = raw.includes("Unauthorized")
+                ? "Session expired — please log out and log back in, then try again."
+                : raw;
             setErrorMsg(msg);
             setState("error");
         }
@@ -149,8 +153,8 @@ export default function VoiceActivationButton() {
                 onClick={() => isRecordingActive ? stopAndProcess() : startRecording()}
                 aria-label="Voice task input"
                 className={`w-11 h-11 text-white rounded-full flex items-center justify-center shadow-md transition-all shrink-0 ${isRecordingActive
-                        ? "bg-red-500 hover:bg-red-600 animate-pulse"
-                        : "bg-[#8b5cf6] hover:bg-purple-600"
+                    ? "bg-red-500 hover:bg-red-600 animate-pulse"
+                    : "bg-[#8b5cf6] hover:bg-purple-600"
                     }`}
             >
                 {isRecordingActive ? (
