@@ -1,19 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useTransition, Suspense } from "react";
 import { createTask } from "@/lib/actions";
 
-export default function NewTask() {
+function NewTaskForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("Work");
     const [priority, setPriority] = useState("Medium");
     const [reminder, setReminder] = useState(true);
     const [repeat, setRepeat] = useState(false);
-    const [dateStr, setDateStr] = useState(new Date().toISOString().split('T')[0]);
-    const [timeStr, setTimeStr] = useState("10:30 AM"); // Simple mocked string for now
+    const [dateStr, setDateStr] = useState(searchParams.get("date") ?? new Date().toISOString().split('T')[0]);
+    const [timeStr, setTimeStr] = useState("10:30 AM");
 
     const handleSave = () => {
         if (!title.trim()) return;
@@ -185,5 +186,13 @@ export default function NewTask() {
             </div>
 
         </div>
+    );
+}
+
+export default function NewTask() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-full"><p className="text-gray-400">Loading...</p></div>}>
+            <NewTaskForm />
+        </Suspense>
     );
 }
