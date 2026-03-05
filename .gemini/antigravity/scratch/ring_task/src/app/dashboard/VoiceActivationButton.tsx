@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState, useRef, useCallback } from "react";
 import { createTask } from "@/lib/actions";
 
@@ -10,15 +12,14 @@ export default function VoiceActivationButton() {
     const [transcript, setTranscript] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const recognitionRef = useRef<SpeechRecognition | null>(null);
+    const recognitionRef = useRef<any>(null);
 
     const startRecording = useCallback(() => {
         const SpeechRecognition =
-            (window as unknown as { SpeechRecognition?: typeof window.SpeechRecognition; webkitSpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition ||
-            (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
+            (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
         if (!SpeechRecognition) {
-            setErrorMsg("Voice input is not supported in this browser. Try Chrome or Safari.");
+            setErrorMsg("Voice input is not supported in this browser. Try Chrome or Edge.");
             setState("error");
             setShowModal(true);
             return;
@@ -36,7 +37,7 @@ export default function VoiceActivationButton() {
         recognition.maxAlternatives = 1;
         recognitionRef.current = recognition;
 
-        recognition.onresult = (event: SpeechRecognitionEvent) => {
+        recognition.onresult = (event: any) => {
             let interim = "";
             let final = "";
             for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -50,12 +51,10 @@ export default function VoiceActivationButton() {
         };
 
         recognition.onend = () => {
-            if (state !== "idle") {
-                setState("processing");
-            }
+            setState(prev => prev === "recording" ? "processing" : prev);
         };
 
-        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        recognition.onerror = (event: any) => {
             if (event.error === "no-speech") {
                 setErrorMsg("No speech detected. Please try again.");
             } else if (event.error === "not-allowed") {
@@ -67,7 +66,7 @@ export default function VoiceActivationButton() {
         };
 
         recognition.start();
-    }, [state]);
+    }, []);
 
     const stopRecording = useCallback(() => {
         recognitionRef.current?.stop();
@@ -112,19 +111,17 @@ export default function VoiceActivationButton() {
         setErrorMsg("");
     }, []);
 
-    const handleButtonClick = useCallback(() => {
-        if (state === "recording") {
-            stopRecording();
-        } else {
-            startRecording();
-        }
-    }, [state, startRecording, stopRecording]);
-
     return (
         <>
             {/* Mic Button */}
             <button
-                onClick={handleButtonClick}
+                onClick={() => {
+                    if (state === "recording") {
+                        stopRecording();
+                    } else {
+                        startRecording();
+                    }
+                }}
                 aria-label="Voice task input"
                 className={`w-11 h-11 text-white rounded-full flex items-center justify-center shadow-md transition-all shrink-0 ${state === "recording"
                         ? "bg-red-500 hover:bg-red-600 animate-pulse"
@@ -158,7 +155,6 @@ export default function VoiceActivationButton() {
                                 {state === "processing" && "Got it!"}
                                 {state === "success" && "✅ Task Created!"}
                                 {state === "error" && "Something went wrong"}
-                                {state === "idle" && "Voice Input"}
                             </h2>
                             <button onClick={handleDismiss} className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -174,18 +170,27 @@ export default function VoiceActivationButton() {
                                         className="w-1.5 bg-[#8b5cf6] rounded-full"
                                         style={{
                                             height: `${h * 30}px`,
-                                            animation: `pulse 0.8s ease-in-out ${i * 0.08}s infinite alternate`
+                                            animation: `wave 0.8s ease-in-out ${i * 0.08}s infinite alternate`
                                         }}
                                     />
                                 ))}
-                                <style>{`@keyframes pulse { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }`}</style>
                             </div>
                         )}
 
-                        {/* Transcript */}
-                        {(state === "processing" || state === "success") && transcript && (
+                        <style>{`@keyframes wave { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }`}</style>
+
+                        {/* Live transcript */}
+                        {state === "recording" && transcript && (
+                            <div className="bg-purple-50 dark:bg-purple-900/10 rounded-2xl p-4 border border-purple-100 dark:border-purple-500/20 transition-colors">
+                                <p className="text-[#0f172a] dark:text-white font-semibold text-[15px] italic">&ldquo;{transcript}&rdquo;</p>
+                            </div>
+                        )}
+
+                        {/* Final transcript for review */}
+                        {state === "processing" && transcript && (
                             <div className="bg-gray-50 dark:bg-[#0f172a] rounded-2xl p-4 border border-gray-100 dark:border-gray-700 transition-colors">
-                                <p className="text-[#0f172a] dark:text-white font-semibold text-[16px]">&ldquo;{transcript}&rdquo;</p>
+                                <p className="text-[11px] font-bold text-[#64748b] dark:text-gray-400 uppercase tracking-widest mb-1">Task title</p>
+                                <p className="text-[#0f172a] dark:text-white font-bold text-[17px]">&ldquo;{transcript}&rdquo;</p>
                             </div>
                         )}
 
@@ -197,6 +202,15 @@ export default function VoiceActivationButton() {
                         )}
 
                         {/* Action buttons */}
+                        {state === "recording" && (
+                            <button
+                                onClick={stopRecording}
+                                className="w-full py-3.5 bg-red-500 text-white rounded-2xl font-extrabold text-[15px] hover:bg-red-600 transition-colors shadow-sm"
+                            >
+                                ⏹ Stop Recording
+                            </button>
+                        )}
+
                         {state === "processing" && transcript && (
                             <div className="flex gap-3">
                                 <button
@@ -209,14 +223,28 @@ export default function VoiceActivationButton() {
                                     onClick={handleSaveTask}
                                     className="flex-1 py-3.5 bg-[#8b5cf6] text-white rounded-2xl font-bold text-[15px] hover:bg-purple-600 transition-colors shadow-sm"
                                 >
-                                    Create Task
+                                    Create Task ✓
+                                </button>
+                            </div>
+                        )}
+
+                        {state === "processing" && !transcript && (
+                            <div className="flex gap-3">
+                                <button onClick={handleDismiss} className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-800 text-[#0f172a] dark:text-white rounded-2xl font-bold text-[15px] transition-colors">
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={startRecording}
+                                    className="flex-1 py-3.5 bg-[#8b5cf6] text-white rounded-2xl font-bold text-[15px] hover:bg-purple-600 transition-colors"
+                                >
+                                    Try Again
                                 </button>
                             </div>
                         )}
 
                         {state === "error" && (
                             <div className="flex gap-3">
-                                <button onClick={handleDismiss} className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-800 text-[#0f172a] dark:text-white rounded-2xl font-bold text-[15px] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                <button onClick={handleDismiss} className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-800 text-[#0f172a] dark:text-white rounded-2xl font-bold text-[15px] transition-colors">
                                     Dismiss
                                 </button>
                                 <button
@@ -226,15 +254,6 @@ export default function VoiceActivationButton() {
                                     Try Again
                                 </button>
                             </div>
-                        )}
-
-                        {state === "recording" && (
-                            <button
-                                onClick={stopRecording}
-                                className="w-full py-3.5 bg-red-500 text-white rounded-2xl font-extrabold text-[15px] hover:bg-red-600 transition-colors shadow-sm"
-                            >
-                                ⏹ Stop Recording
-                            </button>
                         )}
                     </div>
                 </div>
