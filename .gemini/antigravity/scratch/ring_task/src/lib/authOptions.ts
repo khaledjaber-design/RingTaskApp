@@ -19,7 +19,8 @@ export const authOptions: NextAuthOptions = {
                 params: {
                     prompt: "consent",
                     access_type: "offline",
-                    response_type: "code"
+                    response_type: "code",
+                    scope: "openid email profile https://www.googleapis.com/auth/calendar.readonly"
                 }
             }
         }),
@@ -66,8 +67,20 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user?.id) token.userId = user.id;
+            return token;
+        },
+        async session({ session, token }) {
+            if (token.userId && session.user) {
+                (session.user as typeof session.user & { id: string }).id = token.userId as string;
+            }
+            return session;
+        }
+    },
     pages: {
         signIn: '/',
     },
-    debug: true,
+    debug: false,
 }

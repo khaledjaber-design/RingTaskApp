@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { getTasksForDate } from "@/lib/actions";
 import TaskCheckbox from "../../TaskCheckbox";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 type Task = Awaited<ReturnType<typeof getTasksForDate>>[number];
+
+interface GcalEvent {
+    id: string;
+    summary?: string;
+    start?: { dateTime?: string; date?: string };
+    end?: { dateTime?: string; date?: string };
+}
 
 export default async function DailyTasks({ params }: { params: { date: string } }) {
     const dateStr = params.date ?? new Date().toISOString().split('T')[0];
@@ -14,12 +24,28 @@ export default async function DailyTasks({ params }: { params: { date: string } 
     const formattedDate = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(dateObj);
 
     let tasks: Task[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    try { tasks = await getTasksForDate(dateStr); } catch { }
+
+    // Fetch Google Calendar events
+    let gcalEvents: GcalEvent[] = [];
+    let gcalConnected = false;
     try {
-        tasks = await getTasksForDate(dateStr);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch {
-        // unauthenticated or error — show empty state
-    }
+        const session = await getServerSession(authOptions);
+        if (session?.user?.email) {
+            const host = headers().get("host") ?? "ring-task.vercel.app";
+            const proto = process.env.NODE_ENV === "development" ? "http" : "https";
+            const gcalRes = await fetch(`${proto}://${host}/api/google-calendar?date=${dateStr}`, {
+                cache: "no-store",
+                headers: { Cookie: headers().get("cookie") ?? "" }
+            });
+            if (gcalRes.ok) {
+                const gcalData = await gcalRes.json() as { events: GcalEvent[]; connected: boolean };
+                gcalEvents = gcalData.events ?? [];
+                gcalConnected = gcalData.connected;
+            }
+        }
+    } catch { /* gcal not available */ }
 
     const completed = tasks.filter(t => t.isCompleted);
     const todo = tasks.filter(t => !t.isCompleted);
@@ -63,6 +89,50 @@ export default async function DailyTasks({ params }: { params: { date: string } 
                     {completed.length} <span className="text-[#94a3b8] font-medium transition-colors">/ {tasks.length} tasks completed</span>
                 </p>
             </div>
+
+            {/* Google Calendar Events */}
+            {gcalEvents.length > 0 && (
+                <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-3 px-1">
+                        <div className="w-5 h-5 rounded-full bg-white border border-gray-200 dark:bg-[#1e293b] dark:border-transparent flex items-center justify-center">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4285F4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <h2 className="font-bold text-[#0f172a] dark:text-white text-[15px] transition-colors">Google Calendar</h2>
+                        <span className="text-[12px] font-semibold text-[#4285F4] bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">{gcalEvents.length} event{gcalEvents.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        {gcalEvents.map((evt) => {
+                            const start = evt.start?.dateTime ?? evt.start?.date;
+                            const timeLabel = start ? new Date(start).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+                            return (
+                                <div key={evt.id} className="bg-white dark:bg-[#1e293b] rounded-[1.2rem] p-4 shadow-sm border border-gray-100 dark:border-transparent flex items-center gap-4 transition-colors">
+                                    <div className="w-1 h-10 bg-[#4285F4] rounded-full shrink-0" />
+                                    <div className="flex flex-col">
+                                        <span className="font-semibold text-[#0f172a] dark:text-white text-[15px] transition-colors">{evt.summary ?? 'Untitled event'}</span>
+                                        {timeLabel && <span className="text-[#64748b] dark:text-gray-400 text-[12px] font-medium mt-0.5">{timeLabel}</span>}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Prompt to connect Google Calendar if not connected */}
+            {!gcalConnected && (
+                <a href="/dashboard/profile/connected-accounts" className="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-500/20 rounded-[1.2rem] p-4 mb-6 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors">
+                    <div className="w-8 h-8 bg-white dark:bg-[#1e293b] rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4285F4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                    </div>
+                    <div>
+                        <p className="font-bold text-[#1a56db] dark:text-blue-400 text-[14px]">Connect Google Calendar</p>
+                        <p className="text-[12px] text-[#64748b] dark:text-gray-400 font-medium">See your Google events here</p>
+                    </div>
+                    <svg className="ml-auto" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </a>
+            )}
 
             {/* To Do Tasks */}
             {todo.length > 0 && (
